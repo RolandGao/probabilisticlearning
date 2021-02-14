@@ -101,6 +101,7 @@ vcat(a,a)
 
 # Reshape the array
 B = 1:10
+collect(B)
 B_re = reshape(B,2,5)
 # again, lazy, but we can always collect
 B_re |> collect
@@ -109,6 +110,7 @@ B_re |> collect
 # Indexing into Arrays
 # Arrays are represented in memory as a single vector, which you can acess like
 A[:]
+A
 # ith row use A[i,:]
 A[1,:]
 # jth column use A[:,j]
@@ -122,15 +124,16 @@ B_re[1, 2:4]
 [1,2,3][1]
 [1,2,3][3]
 [1,2,3][end]
-[1,2,3][-1]
+# [1,2,3][-1]
 [1,2,3][2:-1:1]
 
 # Functions on Arrays
 # Another important convention in Julia is that elementwise functions
 # won't automatically apply elementwise
-sin(x_col)
+#sin(x_col)
 # this would work in Python, so it's a big gotcha!
 # To apply elementwise, you must use broadcast
+x_col
 broadcast(sin,x_col)
 # this has a very nice sytnax, .
 sin.(x_col)
@@ -141,9 +144,10 @@ sum(A,dims=1)
 sum(A,dims=2)
 # You can do this with broadcasting and general functions too!
 # lazy iterator that gives each row of A
-eachrow(A)
+eachrow(A) |> collect
 sum.(eachrow(A))
 sum.(eachcol(A))
+sum.(A)
 # Notice that this resulted in different dimensions than sum with dims
 eachslice(A,dims=1) # for more than just 2D matrices
 
@@ -224,7 +228,7 @@ f3 = x -> println("I am $x from anonymous")
 
 # also you saw some string interpolation
 println("do this computation $(1+1)")
-
+f3(3)
 ### Loops
 
 # Sometimes, matrix operations are too complicated
@@ -245,7 +249,7 @@ end
 
 # Okay, now let's start using Plots
 using Plots
-# it will take some time to compile the package the first time
+# it will take some time to compile the package the first tim
 
 # There's a few ways to plot a function y = f(x)
 # 1. make the ys by calling f on the xs
@@ -284,9 +288,11 @@ using Zygote
 
 # Here is a function we want the gradient of:
 f(x) = x^2
+g(x)=sin(x)/x
 
 # We can ask Zygote for the gradient w.r.t. x at specific values
 gradient(f,0.)
+gradient(g,0.)
 
 # Let's make sure this is what we expect
 # by writing Unit Tests
